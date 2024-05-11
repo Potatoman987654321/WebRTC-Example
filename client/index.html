@@ -1,24 +1,27 @@
 <!DOCTYPE html>
 <html>
-  <head>
+
+<head>
+    <meta charset="utf-8">
     <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
     <script src="webrtc.js"></script>
-  </head>
+</head>
 
-  <body>
+<body>
     <video id="localVideo" autoplay playsinline muted style="width:40%;"></video>
     <video id="remoteVideo" autoplay playsinline style="width:40%;"></video>
 
     <div style="margin-top: 10px;">
-      Open this page in a second browser window then click below to start the WebRTC connection.
+        Open this page in a second browser window then click below to start the WebRTC connection.
     </div>
 
     <div style="margin-top: 10px;">
-      <input type="button" id="start" onclick="start(true)" value="Start WebRTC"></input>
+        <input type="button" id="start" onclick="start(true)" value="Start WebRTC"></input>
     </div>
 
     <script type="text/javascript">
         pageReady();
     </script>
-  </body>
+</body>
+
 </html>
