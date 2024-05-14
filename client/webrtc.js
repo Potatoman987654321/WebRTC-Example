@@ -4,106 +4,146 @@ let peerConnection;
 let remoteVideo;
 let serverConnection;
 let uuid;
+let receiveChannel;
+let sendChannel
 
 const peerConnectionConfig = {
-  'iceServers': [
-    {'urls': 'stun:stun.stunprotocol.org:3478'},
-    {'urls': 'stun:stun.l.google.com:19302'},
-  ]
+    'iceServers': [
+        { 'urls': 'stun:stun.stunprotocol.org:3478' },
+        { 'urls': 'stun:stun.l.google.com:19302' },
+    ]
 };
 
 async function pageReady() {
-  uuid = createUUID();
+    uuid = createUUID();
 
-  localVideo = document.getElementById('localVideo');
-  remoteVideo = document.getElementById('remoteVideo');
+    localVideo = document.getElementById('localVideo');
+    remoteVideo = document.getElementById('remoteVideo');
 
-  serverConnection = new WebSocket(`wss://${window.location.hostname}:8443`);
-  serverConnection.onmessage = gotMessageFromServer;
+    serverConnection = new WebSocket(`wss://${window.location.hostname}:8443`);
+    serverConnection.onmessage = gotMessageFromServer;
 
-  const constraints = {
-    video: true,
-    audio: true,
-  };
+    document
+        .getElementById("sendButton")
+        .addEventListener("click", sendChatMessage);
 
-  if(!navigator.mediaDevices.getUserMedia) {
-    alert('Your browser does not support getUserMedia API');
-    return;
-  }
+    const constraints = {
+        video: true,
+        audio: true,
+    };
 
-  try {
-    const stream = await navigator.mediaDevices.getUserMedia(constraints);
+    if (!navigator.mediaDevices.getUserMedia) {
+        alert('Your browser does not support getUserMedia API');
+        return;
+    }
 
-    localStream = stream;
-    localVideo.srcObject = stream;
-  } catch(error) {
-    errorHandler(error);
-  }
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia(constraints);
+
+        localStream = stream;
+        localVideo.srcObject = stream;
+    } catch (error) {
+        errorHandler(error);
+    }
 }
 
 function start(isCaller) {
-  peerConnection = new RTCPeerConnection(peerConnectionConfig);
-  peerConnection.onicecandidate = gotIceCandidate;
-  peerConnection.ontrack = gotRemoteStream;
+    peerConnection = new RTCPeerConnection(peerConnectionConfig);
+    peerConnection.onicecandidate = gotIceCandidate;
+    peerConnection.ontrack = gotRemoteStream;
 
-  for(const track of localStream.getTracks()) {
-    peerConnection.addTrack(track, localStream);
-  }
 
-  if(isCaller) {
-    peerConnection.createOffer().then(createdDescription).catch(errorHandler);
-  }
+    peerConnection.ondatachannel = (e) => {
+        receiveChannel = e.channel;
+        receiveChannel.onmessage = (e) => {
+            console.log("messsage received!!!" + e.data);
+            handleDataChannelMessage(e);
+        }
+
+        receiveChannel.onopen = (e) => console.log("open!!!!");
+        receiveChannel.onclose = (e) => console.log("closed!!!!!!");
+        peerConnection.channel = receiveChannel;
+    };
+
+
+
+    sendChannel = peerConnection.createDataChannel("sendChannel");
+    sendChannel.onmessage = (e) => console.log("messsage received!!!" + e.data);
+    sendChannel.onopen = (e) => console.log("open!!!!");
+    sendChannel.onclose = (e) => console.log("closed!!!!!!");
+
+    for (const track of localStream.getTracks()) {
+        peerConnection.addTrack(track, localStream);
+    }
+
+    if (isCaller) {
+        peerConnection.createOffer().then(createdDescription).catch(errorHandler);
+    }
 }
 
 function gotMessageFromServer(message) {
-  if(!peerConnection) start(false);
+    if (!peerConnection) start(false);
 
-  const signal = JSON.parse(message.data);
+    const signal = JSON.parse(message.data);
 
-  // Ignore messages from ourself
-  if(signal.uuid == uuid) return;
+    // Ignore messages from ourself
+    if (signal.uuid == uuid) return;
 
-  if(signal.sdp) {
-    peerConnection.setRemoteDescription(new RTCSessionDescription(signal.sdp)).then(() => {
-      // Only create answers in response to offers
-      if(signal.sdp.type !== 'offer') return;
+    if (signal.sdp) {
+        peerConnection.setRemoteDescription(new RTCSessionDescription(signal.sdp)).then(() => {
+            // Only create answers in response to offers
+            if (signal.sdp.type !== 'offer') return;
 
-      peerConnection.createAnswer().then(createdDescription).catch(errorHandler);
-    }).catch(errorHandler);
-  } else if(signal.ice) {
-    peerConnection.addIceCandidate(new RTCIceCandidate(signal.ice)).catch(errorHandler);
-  }
+            peerConnection.createAnswer().then(createdDescription).catch(errorHandler);
+        }).catch(errorHandler);
+    } else if (signal.ice) {
+        peerConnection.addIceCandidate(new RTCIceCandidate(signal.ice)).catch(errorHandler);
+    }
 }
 
 function gotIceCandidate(event) {
-  if(event.candidate != null) {
-    serverConnection.send(JSON.stringify({'ice': event.candidate, 'uuid': uuid}));
-  }
+    if (event.candidate != null) {
+        serverConnection.send(JSON.stringify({ 'ice': event.candidate, 'uuid': uuid }));
+    }
 }
 
 function createdDescription(description) {
-  console.log('got description');
+    console.log('got description');
 
-  peerConnection.setLocalDescription(description).then(() => {
-    serverConnection.send(JSON.stringify({'sdp': peerConnection.localDescription, 'uuid': uuid}));
-  }).catch(errorHandler);
+    peerConnection.setLocalDescription(description).then(() => {
+        serverConnection.send(JSON.stringify({ 'sdp': peerConnection.localDescription, 'uuid': uuid }));
+    }).catch(errorHandler);
 }
 
 function gotRemoteStream(event) {
-  console.log('got remote stream');
-  remoteVideo.srcObject = event.streams[0];
+    console.log('got remote stream');
+    remoteVideo.srcObject = event.streams[0];
 }
 
 function errorHandler(error) {
-  console.log(error);
+    console.log(error);
 }
 
 // Taken from http://stackoverflow.com/a/105074/515584
 // Strictly speaking, it's not a real UUID, but it gets the job done here
 function createUUID() {
-  function s4() {
-    return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
-  }
+    function s4() {
+        return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
+    }
 
-  return `${s4() + s4()}-${s4()}-${s4()}-${s4()}-${s4() + s4() + s4()}`;
+    return `${s4() + s4()}-${s4()}-${s4()}-${s4()}-${s4() + s4() + s4()}`;
+}
+
+function sendChatMessage() {
+    const chatInput = document.getElementById("chatInput");
+    const message = chatInput.value;
+    chatInput.value = "";
+
+    // Send the message over the data channel
+    sendChannel.send(message);
+}
+
+function handleDataChannelMessage(event) {
+    const chatArea = document.getElementById("chatArea");
+    chatArea.innerHTML += event.data + "<br>";
 }
