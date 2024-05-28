@@ -4,18 +4,19 @@
 <head>
     <meta charset="utf-8">
     <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
+    <link rel="stylesheet" href="style.css">
     <script src="webrtc.js"></script>
 </head>
 
 <body>
-    <video id="localVideo" autoplay playsinline muted style="width:40%;"></video>
-    <video id="remoteVideo" autoplay playsinline style="width:40%;"></video>
+    <video id="localVideo" autoplay playsinline muted class="video"></video>
+    <video id="remoteVideo" autoplay playsinline class="video"></video>
 
-    <div style="margin-top: 10px;">
+    <div class="margin-top">
         Open this page in a second browser window then click below to start the WebRTC connection.
     </div>
 
-    <div style="margin-top: 10px;">
+    <div class="margin-top">
         <input type="button" id="start" onclick="start(true)" value="Start WebRTC"></input>
     </div>
     <input type="text" id="chatInput" placeholder="Enter your message">

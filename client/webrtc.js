@@ -68,7 +68,7 @@ function start(isCaller) {
 
 
     sendChannel = peerConnection.createDataChannel("sendChannel");
-    sendChannel.onmessage = (e) => console.log("messsage received!!!" + e.data);
+    sendChannel.onmessage = (e) => console.log("messsage sent!!!" + e.data);
     sendChannel.onopen = (e) => console.log("open!!!!");
     sendChannel.onclose = (e) => console.log("closed!!!!!!");
 
