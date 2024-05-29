@@ -5,3 +5,19 @@
 .margin-top {
     margin-top: 10px;
 }
+
+.my-message {
+    text-align: right;
+    color: blue;
+}
+
+.their-message {
+    text-align: left;
+    color: blue;
+}
+
+#chatArea {
+    height: 300px;
+    width: 500px;
+    overflow-y: scroll;
+}

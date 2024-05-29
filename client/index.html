@@ -9,6 +9,9 @@
 </head>
 
 <body>
+    <div class="margin-top">
+        <h1>YAKLABASS</h1>
+    <input type="text" id="codeInput" placeholder="Enter your room CODE"><div><br></div>
     <video id="localVideo" autoplay playsinline muted class="video"></video>
     <video id="remoteVideo" autoplay playsinline class="video"></video>
 
@@ -21,9 +24,22 @@
     </div>
     <input type="text" id="chatInput" placeholder="Enter your message">
     <button id="sendButton">Send</button>
-    <div id="chatArea"></div>
+    <div id="chatArea">
+        
+        
+    </div>
 
     <script type="text/javascript">
+        document.getElementById('chatInput').addEventListener('keypress', function (event) {
+                if (event.key === 'Enter') {
+                    document.getElementById('sendButton').click();
+                }
+            });
+        document.getElementById('codeInput').addEventListener('keypress', function (event) {
+                if (event.key === 'Enter') {
+                    enterRoom(document.getElementById('codeInput').value);
+                }
+            });
         pageReady();
     </script>
 </body>
