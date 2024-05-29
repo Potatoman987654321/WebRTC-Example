@@ -1,7 +1,3 @@
-.video {
-    width: 40%;
-}
-
 .margin-top {
     margin-top: 10px;
 }
@@ -44,14 +40,15 @@
 
 #localVideo,
 #remoteVideo {
-    border: 3px solid #ccc;
-}
-
-#localVideo {
-    width: 100%;
+    border: 5px solid #2a2323;
+    border-radius: 25px;
 }
 
 #remoteVideo {
+    width: 100%;
+}
+
+#localVideo {
     position: absolute;
     width: 25%;
     bottom: 0;
@@ -71,4 +68,8 @@
 
 #chat {
     flex: 1;
+}
+
+#codeInput {
+    margin-bottom: 10px;
 }
