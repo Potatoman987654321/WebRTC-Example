@@ -9,39 +9,48 @@
 </head>
 
 <body>
-    <div class="margin-top">
-        <h1>YAKLABASS</h1>
-    <input type="text" id="codeInput" placeholder="Enter your room CODE"><div><br></div>
-    <video id="localVideo" autoplay playsinline muted class="video"></video>
-    <video id="remoteVideo" autoplay playsinline class="video"></video>
-
-    <div class="margin-top">
-        Open this page in a second browser window then click below to start the WebRTC connection.
-    </div>
-
-    <div class="margin-top">
-        <input type="button" id="start" onclick="start(true)" value="Start WebRTC"></input>
-    </div>
-    <input type="text" id="chatInput" placeholder="Enter your message">
-    <button id="sendButton">Send</button>
-    <div id="chatArea">
+    <h1>YAKLABASS</h1>
+    <input type="text" id="codeInput" placeholder="Enter your room CODE">
+    <div id="appContainer">
+        <div id="videoContainer">
+            <div id="localVideoContainer">
+                <video id="localVideo" autoplay playsinline muted class="video"></video>
+                <video id="remoteVideo" autoplay playsinline class="video"></video>
+            </div>
+            <div class="margin-top">
+                Open this page in a second browser window then click below to start the WebRTC connection.
+            </div>
+            
+            <div class="margin-top">
+                <input type="button" id="start" onclick="start(true)" value="Start WebRTC"></input>
+            </div>
+        </div>
         
         
+        <div id="chat">
+            <input type="text" id="chatInput" placeholder="Enter your message">
+            <button id="sendButton">Send</button>
+            <div id="chatArea"
+                style="width: 300px; height: 500px; border: 1px solid #ccc; padding: 10px; overflow-y: scroll;">
+            </div>
+        </div>
     </div>
 
     <script type="text/javascript">
         document.getElementById('chatInput').addEventListener('keypress', function (event) {
-                if (event.key === 'Enter') {
-                    document.getElementById('sendButton').click();
-                }
-            });
+            if (event.key === 'Enter') {
+                document.getElementById('sendButton').click();
+            }
+        });
         document.getElementById('codeInput').addEventListener('keypress', function (event) {
-                if (event.key === 'Enter') {
-                    enterRoom(document.getElementById('codeInput').value);
-                }
-            });
+            if (event.key === 'Enter') {
+                enterRoom(document.getElementById('codeInput').value);
+                codeInput.value = "";
+            }
+        });
         pageReady();
     </script>
+    
 </body>
 
 </html>

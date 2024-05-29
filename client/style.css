@@ -7,17 +7,68 @@
 }
 
 .my-message {
-    text-align: right;
-    color: blue;
+    background-color: #d9f7be;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
 }
 
 .their-message {
-    text-align: left;
-    color: blue;
+    background-color: #efdbff;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+    text-align: right;
 }
 
 #chatArea {
     height: 300px;
     width: 500px;
     overflow-y: scroll;
+}
+#sendMessageForm {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+#messageInput {
+    flex-grow: 1;
+    margin-right: 10px;
+}
+
+#localVideoContainer {
+    position: relative;
+    width: 100%;
+}
+
+#localVideo,
+#remoteVideo {
+    border: 3px solid #ccc;
+}
+
+#localVideo {
+    width: 100%;
+}
+
+#remoteVideo {
+    position: absolute;
+    width: 25%;
+    bottom: 0;
+    right: 0;
+}
+
+#appContainer {
+    display: flex;
+    justify-content: space-between;
+}
+
+#videoContainer {
+    flex: 1;
+    margin-right: 20px;
+    width: 50%;
+}
+
+#chat {
+    flex: 1;
 }

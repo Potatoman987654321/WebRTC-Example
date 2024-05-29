@@ -140,15 +140,17 @@ function createUUID() {
 function sendChatMessage() {
     const chatInput = document.getElementById("chatInput");
     const message = chatInput.value;
-    chatInput.value = "";
+    if (message.trim() !== '') {
+        chatInput.value = "";
 
-    // Send the message over the data channel
-    dataChannel.send(message);
+        // Send the message over the data channel
+        dataChannel.send(message);
 
-    // Add the message to the chat area
-    const chatArea = document.getElementById("chatArea");
-    chatArea.innerHTML =
-        `<div class="my-message">${message}</div>` + chatArea.innerHTML;
+        // Add the message to the chat area
+        const chatArea = document.getElementById("chatArea");
+        chatArea.innerHTML =
+            `<div class="my-message">${message}</div>` + chatArea.innerHTML;
+    }
 }
 
 function handleDataChannelMessage(event) {
@@ -160,5 +162,7 @@ function handleDataChannelMessage(event) {
         `<div class="their-message">${message}</div>` + chatArea.innerHTML;
 }
 function enterRoom(roomCode) {
-    serverConnection.send(JSON.stringify({roomcode:roomCode}));
+    if (roomCode.trim() !== '') {
+        serverConnection.send(JSON.stringify({ roomcode: roomCode }));
+    }
 }

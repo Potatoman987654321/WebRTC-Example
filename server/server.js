@@ -4,6 +4,7 @@ const fs = require("fs");
 const https = require("https");
 const WebSocket = require("ws");
 const WebSocketServer = WebSocket.Server;
+
 const rooms = new Map();
 
 // Yes, TLS is required for WebRTC
